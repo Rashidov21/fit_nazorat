@@ -19,17 +19,17 @@
                 <span class="font-bold text-xl tracking-tight text-slate-900">FitNazorat</span>
             </div>
             <nav class="px-4 space-y-2">
-                <a href="{% url 'superadmin_dashboard' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'superadmin_dashboard' %}" class="flex items-center gap-3 {% if request.resolver_match.url_name == 'superadmin_dashboard' %}bg-blue-50 text-blue-700{% else %}text-slate-500 hover:bg-slate-50 hover:text-blue-600{% endif %} px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     Bosh sahifa
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'superadmin_gyms' %}" class="flex items-center gap-3 {% if request.resolver_match.url_name == 'superadmin_gyms' %}bg-blue-50 text-blue-700{% else %}text-slate-500 hover:bg-slate-50 hover:text-blue-600{% endif %} px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    Zallar (Gyms)
+                    Sport Zallari
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                <a href="javascript:void(0)" class="flex items-center gap-3 text-slate-400 bg-slate-50 cursor-not-allowed px-4 py-3 rounded-xl font-medium transition" title="Tez kunda..">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Obunalar va moliya
+                    Ta'riflar (Kutilmoqda)
                 </a>
             </nav>
         </div>
@@ -97,11 +97,58 @@
                 </div>
             </div>
 
-            <div class="bg-white border text-center text-slate-500 border-slate-200 rounded-3xl p-6 shadow-sm min-h-[400px] flex items-center justify-center">
-                Moliya grafikasi (Chart.js yoki ApexCharts kelajakda o'rnatiladi)
+            <div class="bg-white border text-left border-slate-200 rounded-3xl p-6 shadow-sm min-h-[400px]">
+                <h3 class="font-bold text-slate-800 mb-6">Yangi platforma ulanishlari (Oxirgi 7 kun)</h3>
+                <canvas id="growthChart" height="100"></canvas>
             </div>
 
         </div>
     </main>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            const dataLabels = JSON.parse('{{ chart_labels|safe }}');
+            const dataPoints = JSON.parse('{{ chart_data|safe }}');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dataLabels,
+                    datasets: [{
+                        label: 'Yangi Zallar',
+                        data: dataPoints,
+                        borderColor: '#2563eb', // blue-600
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#2563eb',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            ticks: { precision: 0 }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

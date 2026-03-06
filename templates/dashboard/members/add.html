@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yangi Mijoz - {{ gym.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col justify-between flex-shrink-0 border-r border-slate-200">
+        <div>
+            <div class="h-16 flex items-center px-6 border-b border-slate-100 mb-6 bg-blue-600 text-white">
+                <span class="font-bold text-lg tracking-tight truncate w-full">{{ gym.name }}</span>
+            </div>
+            <nav class="px-4 space-y-2">
+                <a href="{% url 'gym_dashboard' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Bosh sahifa
+                </a>
+                <a href="{% url 'gym_members_list' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Mijozlar bazasi
+                </a>
+                <a href="{% url 'gym_attendance_log' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Davomat (Hikvision)
+                </a>
+            </nav>
+        </div>
+        
+        <div class="px-4 pb-6 mt-10">
+            <a href="{% url 'logout' %}" class="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 w-full px-4 py-2.5 rounded-xl font-medium transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Tizimdan chiqish
+            </a>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 relative">
+        <header class="h-16 flex items-center justify-between px-8 z-10">
+            <h1 class="text-2xl font-bold text-slate-800">Yangi Qo'shish</h1>
+            <a href="{% url 'gym_members_list' %}" class="text-slate-500 hover:text-slate-700 px-5 py-2 font-semibold transition flex items-center gap-2">
+                &larr; <span class="text-sm">Ro'yxatga qaytish</span>
+            </a>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 pt-6 z-10 w-full max-w-7xl mx-auto">
+            <div class="bg-white border text-left border-slate-200 rounded-3xl p-8 shadow-sm max-w-2xl">
+                
+                <form action="{% url 'gym_add_member' %}" method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="first_name" class="block text-sm font-semibold text-slate-700">Ism <span class="text-red-500">*</span></label>
+                            <input type="text" name="first_name" id="first_name" required class="mt-2 block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition">
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-semibold text-slate-700">Familiya <span class="text-red-500">*</span></label>
+                            <input type="text" name="last_name" id="last_name" required class="mt-2 block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="phone_number" class="block text-sm font-semibold text-slate-700">Telefon raqam <span class="text-red-500">*</span></label>
+                        <div class="mt-2 flex shadow-sm rounded-xl">
+                            <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-500 sm:text-sm font-medium">
+                                +998
+                            </span>
+                            <input type="text" name="phone_number" id="phone_number" required class="flex-1 min-w-0 block w-full px-3 py-3 rounded-none rounded-r-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition shadow-sm" placeholder="90 123 45 67">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="face_id_code" class="block text-sm font-semibold text-slate-700">Face ID Kodu (Hikvision) <span class="text-slate-400 font-normal ml-2 text-xs">(Ixtiyoriy)</span></label>
+                            <input type="text" name="face_id_code" id="face_id_code" class="mt-2 block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition" placeholder="Device orqali belgilash">
+                            <p class="mt-1 text-xs text-slate-500">Mijoz Face ID dan o'tgandan keyin ham bazaga bog'lashingiz mumkin.</p>
+                        </div>
+                        <div>
+                            <label for="telegram_id" class="block text-sm font-semibold text-slate-700">Telegram Chat ID <span class="text-slate-400 font-normal ml-2 text-xs">(Ixtiyoriy)</span></label>
+                            <input type="text" name="telegram_id" id="telegram_id" class="mt-2 block w-full px-3 py-3 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition">
+                            <p class="mt-1 text-xs text-slate-500">Bot orqali avtomatik kelib tushadi agar raqam orqali bog'lansa.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition shadow-[0_4px_14px_0_rgba(37,99,235,0.39)]">
+                            Saqlash
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

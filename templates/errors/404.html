@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}404 - Sahifa Topilmadi{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
+    <div class="text-9xl font-extrabold text-blue-100 relative">
+        404
+        <div class="absolute inset-x-0 bottom-0 text-3xl font-bold p-2 text-blue-600">Sahifa Topilmadi</div>
+    </div>
+    <p class="mt-8 mx-auto max-w-md text-lg text-slate-500">
+        Kechirasiz, siz qidirgan sahifa mavjud emas. Manzil noto'g'ri kiritilgan yoki qanaqadir o'zgarish bo'lgan bo'lishi mumkin.
+    </p>
+    <div class="mt-8">
+        <a href="{% url 'landing_page' %}" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 shadow-md transition">
+            Asosiy sahifaga qaytish
+        </a>
+    </div>
+</div>
+{% endblock %}

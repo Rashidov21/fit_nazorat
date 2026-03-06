@@ -18,15 +18,15 @@
                 <span class="font-bold text-lg tracking-tight truncate w-full">{{ gym.name }}</span>
             </div>
             <nav class="px-4 space-y-2">
-                <a href="#" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'gym_dashboard' %}" class="flex items-center gap-3 {% if request.resolver_match.url_name == 'gym_dashboard' %}bg-blue-50 text-blue-700{% else %}text-slate-500 hover:bg-slate-50 hover:text-blue-600{% endif %} px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     Bosh sahifa
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'gym_members_list' %}" class="flex items-center gap-3 {% if 'members' in request.path %}bg-blue-50 text-blue-700{% else %}text-slate-500 hover:bg-slate-50 hover:text-blue-600{% endif %} px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Mijozlar bazasi
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'gym_attendance_log' %}" class="flex items-center gap-3 {% if 'attendance' in request.path %}bg-blue-50 text-blue-700{% else %}text-slate-500 hover:bg-slate-50 hover:text-blue-600{% endif %} px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Davomat (Hikvision)
                 </a>
@@ -79,22 +79,101 @@
                     <div class="text-4xl font-extrabold text-slate-800">{{ today_attendances }} <span class="text-sm font-medium text-slate-400">tashrif</span></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-center border-dashed cursor-pointer hover:bg-slate-50 transition group">
+                <a href="{% url 'gym_add_member' %}" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-center border-dashed cursor-pointer hover:bg-slate-50 transition group">
                     <div class="text-center">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-600 group-hover:text-white transition">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         </div>
                         <span class="font-semibold text-slate-600 text-sm">Yangi Mijoz Qo'shish</span>
                     </div>
-                </div>
+                </a>
             </div>
             
-            <div class="bg-white p-8 border border-slate-200 rounded-3xl mt-8">
-                <h3 class="text-lg font-bold text-slate-800 mb-4">Mijozlar Ro'yxati jadvallari</h3>
-                <p class="text-sm text-slate-500">Mijozlarni ro'yxati bu yerda DataTables plaginida chiqadi. Bu yerdan Hikvision qurilmaga Face-ID yuklash imkoniyati bo'ladi.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 border border-slate-200 rounded-3xl shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-6">Mijozlar tashrifi (Oxirgi 7 kun)</h3>
+                    <canvas id="attendanceChart" height="150"></canvas>
+                </div>
+
+                <div class="bg-white p-8 border border-slate-200 rounded-3xl shadow-sm overflow-hidden flex flex-col">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-slate-800">Oxirgi tashriflar</h3>
+                        <a href="{% url 'gym_attendance_log' %}" class="text-blue-600 text-sm font-semibold hover:underline">Barchasini ko'rish</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="text-slate-400 border-b border-slate-100">
+                                <tr>
+                                    <th class="pb-3 font-medium">Mijoz</th>
+                                    <th class="pb-3 font-medium">Vaqt</th>
+                                    <th class="pb-3 font-medium text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                {% for att in last_attendances %}
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-3 font-semibold text-slate-800">{{ att.member.first_name }} {{ att.member.last_name }}</td>
+                                    <td class="py-3 text-slate-500">{{ att.check_in_time|date:"H:i" }}</td>
+                                    <td class="py-3 text-right">
+                                        {% if att.is_success %}
+                                        <span class="text-green-500 font-bold">✓</span>
+                                        {% else %}
+                                        <span class="text-red-500 font-bold">✗</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="py-6 text-center text-slate-400 italic">Hali tashriflar yo'q</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            const dataLabels = JSON.parse('{{ chart_labels|safe }}');
+            const dataPoints = JSON.parse('{{ chart_data|safe }}');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dataLabels,
+                    datasets: [{
+                        label: 'Tashriflar soni',
+                        data: dataPoints,
+                        backgroundColor: '#3b82f6', // blue-500
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f8fafc', drawBorder: false },
+                            ticks: { precision: 0 }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
     {% else %}
     <div class="w-full h-full flex items-center justify-center">
         <div class="text-center max-w-sm">

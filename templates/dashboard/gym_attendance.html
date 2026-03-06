@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Davomat Loglari - {{ gym.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col justify-between flex-shrink-0 border-r border-slate-200">
+        <div>
+            <div class="h-16 flex items-center px-6 border-b border-slate-100 mb-6 bg-blue-600 text-white">
+                <span class="font-bold text-lg tracking-tight truncate w-full">{{ gym.name }}</span>
+            </div>
+            <nav class="px-4 space-y-2">
+                <a href="{% url 'gym_dashboard' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Bosh sahifa
+                </a>
+                <a href="{% url 'gym_members_list' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Mijozlar bazasi
+                </a>
+                <a href="{% url 'gym_attendance_log' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Davomat (Hikvision)
+                </a>
+            </nav>
+        </div>
+        
+        <div class="px-4 pb-6 mt-10">
+            <a href="{% url 'logout' %}" class="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 w-full px-4 py-2.5 rounded-xl font-medium transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Tizimdan chiqish
+            </a>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 relative">
+        <header class="h-16 flex items-center justify-between px-8 z-10 border-b border-slate-200 bg-white">
+            <h1 class="text-2xl font-bold text-slate-800">Oxirgi Tashriflar</h1>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 z-10 w-full max-w-7xl mx-auto">
+            <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Vaqt</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Mijoz</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Qurilma</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Holati</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Xabar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for attendance in attendances %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 text-sm text-slate-600">{{ attendance.check_in_time|date:"d.m.Y H:i" }}</td>
+                            <td class="px-6 py-4">
+                                <span class="font-bold text-slate-800">{{ attendance.member.first_name }} {{ attendance.member.last_name }}</span>
+                                <p class="text-xs text-slate-500">{{ attendance.member.phone_number }}</p>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">{{ attendance.device.device_name }}</td>
+                            <td class="px-6 py-4 text-sm">
+                                {% if attendance.is_success %}
+                                <span class="text-green-600 font-bold flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Ruxsat etildi
+                                </span>
+                                {% else %}
+                                <span class="text-red-600 font-bold flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    Rad etildi
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500 italic">{{ attendance.message }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-10 text-center text-slate-500 italic">Hozircha hech qanday tashrif qayd etilmagan.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
