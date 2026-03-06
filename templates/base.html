@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FitNazorat - Fitnes Klublarni Boshqarish Tizimi{% endblock %}</title>
+    
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for development) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1d4ed8', // futuristic blue
+                        secondary: '#3b82f6',
+                        dark: '#0f172a',    // clean dark shade
+                    }
+                }
+            }
+        }
+    </script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col">
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="fixed top-5 right-5 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+            <div class="p-4 rounded-md shadow-lg {% if message.tags == 'error' %}bg-red-500 text-white{% elif message.tags == 'success' %}bg-green-500 text-white{% else %}bg-blue-500 text-white{% endif %} text-sm font-medium transition-all animate-bounce">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Navbar -->
+    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="{% url 'landing_page' %}" class="flex items-center gap-2">
+                        <!-- SVG Logo -->
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span class="font-bold text-xl tracking-tight text-dark">FitNazorat</span>
+                    </a>
+                </div>
+                <!-- Links (Desktop) -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{% url 'landing_page' %}#xususiyatlar" class="text-sm font-medium text-slate-600 hover:text-primary transition">Xususiyatlar</a>
+                    <a href="{% url 'landing_page' %}#tariflar" class="text-sm font-medium text-slate-600 hover:text-primary transition">Ta'riflar</a>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="text-sm font-medium text-slate-600 hover:text-red-500 transition">Tizimdan chiqish</a>
+                        <a href="{% url 'login' %}" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-secondary transition shadow-sm">Kabinetga kirish</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-sm font-medium text-slate-600 hover:text-primary transition">Tizimga kirish</a>
+                        <a href="{% url 'register_trial' %}" class="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-secondary transition shadow-sm">Bepul sinab ko'rish</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-slate-400 py-12 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <a href="{% url 'landing_page' %}" class="flex items-center gap-2 mb-4">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span class="font-bold text-lg text-white">FitNazorat</span>
+                </a>
+                <p class="text-sm">Andijon va butun O'zbekiston fitnes klublari uchun maxsus yaratilgan raqamli innovatsion boshqaruv tizimi.</p>
+            </div>
+            <div>
+                <h3 class="text-white font-semibold mb-4">Havolalar</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">Asosiy sahifa</a></li>
+                    <li><a href="#" class="hover:text-white transition">Tizim imkoniyatlari</a></li>
+                    <li><a href="#" class="hover:text-white transition">Narxlar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-white font-semibold mb-4">Aloqa</h3>
+                <ul class="space-y-2 text-sm">
+                    <li>Telefon: +998 90 123 45 67</li>
+                    <li>Email: info@fitnazorat.uz</li>
+                    <li>Manzil: Andijon shahri, Bobur shoh ko'chasi, 1-uy</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 mt-8 pt-8 text-center text-sm">
+            <p>&copy; {% now "Y" %} FitNazorat. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

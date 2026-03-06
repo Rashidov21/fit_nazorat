@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Superadmin Paneli - FitNazorat{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col justify-between flex-shrink-0 border-r border-slate-200">
+        <div>
+            <div class="h-16 flex items-center px-6 border-b border-slate-100 mb-6">
+                <!-- SVG Logo -->
+                <svg class="w-8 h-8 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <span class="font-bold text-xl tracking-tight text-slate-900">FitNazorat</span>
+            </div>
+            <nav class="px-4 space-y-2">
+                <a href="{% url 'superadmin_dashboard' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Bosh sahifa
+                </a>
+                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    Zallar (Gyms)
+                </a>
+                <a href="#" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Obunalar va moliya
+                </a>
+            </nav>
+        </div>
+        
+        <div class="px-4 pb-6">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex items-center justify-between mb-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-slate-800">{{ user.first_name|default:"Superadmin" }}</h4>
+                    <p class="text-xs text-slate-500">{{ user.email }}</p>
+                </div>
+            </div>
+            <a href="{% url 'logout' %}" class="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 w-full px-4 py-2.5 rounded-xl font-medium transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Tizimdan chiqish
+            </a>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 relative">
+        <!-- Abstract gradient top -->
+        <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-blue-100/40 to-transparent z-0 pointer-events-none"></div>
+        
+        <!-- Top nav -->
+        <header class="h-16 flex items-center justify-between px-8 z-10">
+            <h1 class="text-2xl font-bold text-slate-800">Asosiy panel (Analitika)</h1>
+            <div class="text-sm text-slate-500 font-medium bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100">
+                Bugun: {% now "d M Y" %}
+            </div>
+        </header>
+
+        <!-- Main Dashboard space -->
+        <div class="flex-1 overflow-y-auto p-8 pt-4 z-10 w-full max-w-7xl mx-auto space-y-8">
+            
+            <!-- Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-slate-500 text-sm uppercase tracking-wide">Jami Sport Zallari</h3>
+                        <span class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </span>
+                    </div>
+                    <div class="text-4xl font-extrabold text-slate-800">{{ total_gyms }} <span class="text-sm font-medium text-slate-400">ta ob'ekt</span></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-slate-500 text-sm uppercase tracking-wide">Faol Zallar</h3>
+                        <span class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </span>
+                    </div>
+                    <div class="text-4xl font-extrabold text-slate-800">{{ active_gyms }} <span class="text-sm font-medium text-slate-400">ta to'lagan</span></div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-slate-500 text-sm uppercase tracking-wide">Barcha Mijozlar</h3>
+                        <span class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="text-4xl font-extrabold text-slate-800">{{ total_members }} <span class="text-sm font-medium text-slate-400">kishi</span></div>
+                </div>
+            </div>
+
+            <div class="bg-white border text-center text-slate-500 border-slate-200 rounded-3xl p-6 shadow-sm min-h-[400px] flex items-center justify-center">
+                Moliya grafikasi (Chart.js yoki ApexCharts kelajakda o'rnatiladi)
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
