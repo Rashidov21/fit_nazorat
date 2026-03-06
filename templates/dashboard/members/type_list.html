@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Davomat Loglari - {{ gym.name }}</title>
+    <title>Obuna Ta'riflari - {{ gym.name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
@@ -25,22 +25,17 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Mijozlar bazasi
                 </a>
-                <a href="{% url 'gym_membership_types' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'gym_membership_types' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     Obuna Ta'riflari
                 </a>
-                <a href="{% url 'gym_attendance_log' %}" class="flex items-center gap-3 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl font-medium transition">
+                <a href="{% url 'gym_attendance_log' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Davomat (Loglar)
-                </a>
-                <a href="{% url 'gym_devices' %}" class="flex items-center gap-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 px-4 py-3 rounded-xl font-medium transition">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
-                    Face ID Qurilmalar
+                    Davomat (Hikvision)
                 </a>
             </nav>
         </div>
-        
-        <div class="px-4 pb-6 mt-10">
+        <div class="px-4 pb-6">
             <a href="{% url 'logout' %}" class="flex items-center gap-2 text-red-500 hover:bg-red-50 hover:text-red-600 w-full px-4 py-2.5 rounded-xl font-medium transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 Tizimdan chiqish
@@ -51,48 +46,56 @@
     <!-- Content -->
     <main class="flex-1 flex flex-col overflow-hidden bg-slate-50/50 relative">
         <header class="h-16 flex items-center justify-between px-8 z-10 border-b border-slate-200 bg-white">
-            <h1 class="text-2xl font-bold text-slate-800">Oxirgi Tashriflar</h1>
+            <h1 class="text-2xl font-bold text-slate-800">Obuna Ta'riflari</h1>
+            <a href="{% url 'gym_add_membership_type' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-sm transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Yangi Ta'rif
+            </a>
         </header>
+
+        {% if messages %}
+        <div class="px-8 mt-4">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} font-medium">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="flex-1 overflow-y-auto p-8 z-10 w-full max-w-7xl mx-auto">
             <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
                 <table class="w-full text-left">
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Vaqt</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Mijoz</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Qurilma</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Nomi</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Narxi</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Muddati</th>
                             <th class="px-6 py-4 text-sm font-semibold text-slate-600">Holati</th>
-                            <th class="px-6 py-4 text-sm font-semibold text-slate-600">Xabar</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-slate-600 text-right">Amallar</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        {% for attendance in attendances %}
+                        {% for type in types %}
                         <tr class="hover:bg-slate-50 transition">
-                            <td class="px-6 py-4 text-sm text-slate-600">{{ attendance.check_in_time|date:"d.m.Y H:i" }}</td>
-                            <td class="px-6 py-4">
-                                <span class="font-bold text-slate-800">{{ attendance.member.first_name }} {{ attendance.member.last_name }}</span>
-                                <p class="text-xs text-slate-500">{{ attendance.member.phone_number }}</p>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-500">{{ attendance.device.device_name }}</td>
+                            <td class="px-6 py-4 font-bold text-slate-800">{{ type.name }}</td>
+                            <td class="px-6 py-4 text-sm text-slate-800 font-mono">{{ type.price }} so'm</td>
+                            <td class="px-6 py-4 text-sm text-slate-500">{{ type.duration_days }} kun</td>
                             <td class="px-6 py-4 text-sm">
-                                {% if attendance.is_success %}
-                                <span class="text-green-600 font-bold flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Ruxsat etildi
-                                </span>
+                                {% if type.is_active %}
+                                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Faol</span>
                                 {% else %}
-                                <span class="text-red-600 font-bold flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                    Rad etildi
-                                </span>
+                                <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">Nofaol</span>
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4 text-sm text-slate-500 italic">{{ attendance.message }}</td>
+                            <td class="px-6 py-4 text-right flex justify-end gap-3">
+                                <a href="{% url 'gym_edit_membership_type' type.id %}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Tahrirlash</a>
+                                <a href="{% url 'gym_delete_membership_type' type.id %}" onclick="return confirm('Haqiqatdan ham o\'chirmoqchimisiz?')" class="text-red-500 hover:text-red-700 font-semibold text-sm">O'chirish</a>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="px-6 py-10 text-center text-slate-500 italic">Hozircha hech qanday tashrif qayd etilmagan.</td>
+                            <td colspan="5" class="px-6 py-10 text-center text-slate-500 italic">Hali tariflar qo'shilmagan.</td>
                         </tr>
                         {% endfor %}
                     </tbody>

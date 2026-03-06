@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Rejani Tahrirlash - FitNazorat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-xl max-w-xl w-full p-10">
+        <h1 class="text-3xl font-extrabold text-slate-900 mb-8">Rejani Tahrirlash</h1>
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Reja nomi</label>
+                <input type="text" name="name" value="{{ plan.name }}" required class="w-full px-5 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Narxi ($ / oy)</label>
+                    <input type="number" name="price" value="{{ plan.price }}" required class="w-full px-5 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Maks. Mijozlar</label>
+                    <input type="number" name="max_members" value="{{ plan.max_members|default:'' }}" placeholder="Cheksiz uchun bo'sh qoldiring" class="w-full px-5 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Tavsif</label>
+                <textarea name="description" rows="3" class="w-full px-5 py-4 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">{{ plan.description }}</textarea>
+            </div>
+            <div class="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="has_bot" {% if plan.has_telegram_bot %}checked{% endif %} class="w-5 h-5 text-blue-600 rounded">
+                    <span class="text-sm font-bold text-slate-700">Telegram Bot mavjud</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="has_analytics" {% if plan.has_analytics %}checked{% endif %} class="w-5 h-5 text-blue-600 rounded">
+                    <span class="text-sm font-bold text-slate-700">Analitika mavjud</span>
+                </label>
+            </div>
+            <div class="flex gap-4 pt-4">
+                <a href="{% url 'superadmin_plans' %}" class="flex-1 text-center py-4 text-slate-500 font-bold hover:text-slate-800 transition">Bekor qilish</a>
+                <button type="submit" class="flex-[2] bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-500/30 transition">O'zgarishlarni Saqlash</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

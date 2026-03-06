@@ -1,15 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from accounts.models import User
 from gyms.models import Gym
 from members.models import Member
 from attendance.models import Attendance
+from subscriptions.models import SubscriptionPlan
+import json
+from django.utils import timezone
+from datetime import timedelta
 
 @login_required
 def gym_admin_dashboard(request):
-    import json
-    from datetime import timedelta
-    from django.utils import timezone
     
     if request.user.role != User.Role.GYM_ADMIN:
         return render(request, 'errors/403.html', status=403)
@@ -57,3 +59,75 @@ def gym_attendance_log(request):
         'attendances': attendances,
     }
     return render(request, 'dashboard/gym_attendance.html', context)
+
+@login_required
+def gym_devices(request):
+    if request.user.role != User.Role.GYM_ADMIN:
+        return render(request, 'errors/403.html', status=403)
+        
+    gym = request.user.gyms.first()
+    devices = gym.devices.all()
+    context = {
+        'gym': gym,
+        'devices': devices,
+    }
+    return render(request, 'dashboard/gym_devices_list.html', context)
+
+@login_required
+def gym_add_device(request):
+    if request.user.role != User.Role.GYM_ADMIN:
+        return render(request, 'errors/403.html', status=403)
+        
+    gym = request.user.gyms.first()
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        serial = request.POST.get('serial')
+        ip = request.POST.get('ip')
+        
+        from .models import GymDevice
+        GymDevice.objects.create(
+            gym=gym,
+            device_name=name,
+            serial_number=serial,
+            ip_address=ip if ip else None
+        )
+        messages.success(request, "Yangi qurilma qo'shildi.")
+        return redirect('gym_devices')
+        
+    return render(request, 'dashboard/gym_device_add.html', {'gym': gym})
+
+@login_required
+def gym_edit_device(request, device_id):
+    if request.user.role != User.Role.GYM_ADMIN:
+        return render(request, 'errors/403.html', status=403)
+        
+    gym = request.user.gyms.first()
+    from .models import GymDevice
+    device = get_object_or_404(GymDevice, id=device_id, gym=gym)
+    
+    if request.method == 'POST':
+        device.device_name = request.POST.get('name')
+        device.serial_number = request.POST.get('serial')
+        device.ip_address = request.POST.get('ip') if request.POST.get('ip') else None
+        device.is_active = request.POST.get('is_active') == 'on'
+        device.save()
+        messages.success(request, "Qurilma ma'lumotlari yangilandi.")
+        return redirect('gym_devices')
+        
+    context = {
+        'gym': gym,
+        'device': device,
+    }
+    return render(request, 'dashboard/gym_device_edit.html', context)
+
+@login_required
+def gym_delete_device(request, device_id):
+    if request.user.role != User.Role.GYM_ADMIN:
+        return render(request, 'errors/403.html', status=403)
+        
+    gym = request.user.gyms.first()
+    from .models import GymDevice
+    device = get_object_or_404(GymDevice, id=device_id, gym=gym)
+    device.delete()
+    messages.success(request, "Qurilma o'chirildi.")
+    return redirect('gym_devices')
