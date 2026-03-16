@@ -12,6 +12,7 @@ from gyms.views import (
     gym_admin_dashboard, gym_attendance_log, 
     gym_devices, gym_add_device, gym_edit_device, gym_delete_device
 )
+from members.tma_views import member_profile_tma
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +46,9 @@ urlpatterns = [
     
     # API endpoints
     path('attendance/', include('attendance.urls')),
+
+    # TMA (Telegram Mini App)
+    path('tma/profile/<str:telegram_id>/', member_profile_tma, name='member_profile_tma'),
 ]
 
 if settings.DEBUG:

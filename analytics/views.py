@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
+import json
 from gyms.models import Gym
 from members.models import Member
-from subscriptions.models import SubscriptionPlan
+from subscriptions.models import SubscriptionPlan, GymSubscription
 from accounts.models import User
 
 @login_required
@@ -11,10 +14,6 @@ def superadmin_dashboard(request):
     if request.user.role != User.Role.SUPERADMIN and not request.user.is_superuser:
         return render(request, 'errors/403.html', status=403)
         
-    import json
-    from datetime import timedelta
-    from django.utils import timezone
-    
     # 7 days gym registration growth
     today = timezone.now().date()
     labels = []
@@ -31,8 +30,8 @@ def superadmin_dashboard(request):
         'active_gyms': Gym.objects.filter(is_active=True).count(),
         'total_members': Member.objects.count(),
         'plans': SubscriptionPlan.objects.all(),
-        'gym_registrations': json.dumps(list(data.values())),
-        'gym_labels': json.dumps(list(data.keys())),
+        'chart_data': json.dumps(data),
+        'chart_labels': json.dumps(labels),
     }
     return render(request, 'dashboard/superadmin_index.html', context)
 
@@ -142,6 +141,7 @@ def superadmin_add_gym(request):
         
         # Create or find owner
         owner, created = User.objects.get_or_create(email=owner_email, defaults={
+            'username': owner_email,
             'role': User.Role.GYM_ADMIN,
             'is_active': True
         })
@@ -158,11 +158,11 @@ def superadmin_add_gym(request):
         )
         
         if plan_id:
-            from subscriptions.models import GymSubscription, SubscriptionPlan
             plan = get_object_or_404(SubscriptionPlan, id=plan_id)
             GymSubscription.objects.create(
                 gym=gym,
                 plan=plan,
+                start_date=timezone.now().date(),
                 end_date=timezone.now().date() + timedelta(days=30) # Default 30 days
             )
             
@@ -188,9 +188,12 @@ def superadmin_edit_gym(request, gym_id):
         
         plan_id = request.POST.get('plan_id')
         if plan_id:
-            from subscriptions.models import GymSubscription, SubscriptionPlan
             plan = get_object_or_404(SubscriptionPlan, id=plan_id)
-            sub, created = GymSubscription.objects.get_or_create(gym=gym, defaults={'plan': plan})
+            sub, created = GymSubscription.objects.get_or_create(gym=gym, defaults={
+                'plan': plan,
+                'start_date': timezone.now().date(),
+                'end_date': timezone.now().date() + timedelta(days=30)
+            })
             if not created:
                 sub.plan = plan
                 sub.save()

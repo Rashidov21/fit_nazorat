@@ -84,7 +84,7 @@
                             </td>
                             <td class="px-6 py-4 text-right flex justify-end gap-3">
                                 <a href="{% url 'gym_edit_device' device.id %}" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Tahrirlash</a>
-                                <a href="{% url 'gym_delete_device' device.id %}" onclick="return confirm('Qurilmani o\'chirmoqchimisiz?')" class="text-red-500 hover:text-red-700 font-semibold text-sm">O'chirish</a>
+                                <button data-url="{% url 'gym_delete_device' device.id %}" data-name="{{ device.device_name }}" onclick="openDeleteModal(this)" class="text-red-500 hover:text-red-700 font-semibold text-sm">O'chirish</button>
                             </td>
                         </tr>
                         {% empty %}
@@ -98,5 +98,52 @@
         </div>
     </main>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="hideDeleteModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-100">
+                <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-14 w-14 rounded-2xl bg-red-50 sm:mx-0 sm:h-12 sm:w-12">
+                            <svg class="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-6 sm:text-left">
+                            <h3 class="text-xl leading-6 font-bold text-slate-900" id="modal-title">Qurilmani o'chirish</h3>
+                            <div class="mt-3">
+                                <p class="text-sm text-slate-500">
+                                    Siz haqiqatdan ham <span id="deleteObjectName" class="font-bold text-slate-800"></span> qurilmasini tizimdan o'chirib tashlamoqchimisiz?
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-8 py-6 sm:px-8 sm:flex sm:flex-row-reverse gap-3">
+                    <a id="confirmDeleteBtn" href="#" class="w-full inline-flex justify-center rounded-2xl border border-transparent shadow-lg shadow-red-500/20 px-6 py-3 bg-red-600 text-base font-bold text-white hover:bg-red-700 focus:outline-none transition sm:w-auto sm:text-sm">
+                        O'chirish
+                    </a>
+                    <button type="button" onclick="hideDeleteModal()" class="mt-3 w-full inline-flex justify-center rounded-2xl border border-slate-200 shadow-sm px-6 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none transition sm:mt-0 sm:w-auto sm:text-sm">
+                        Bekor qilish
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(btn) {
+            const url = btn.getAttribute('data-url');
+            const name = btn.getAttribute('data-name');
+            document.getElementById('deleteObjectName').innerText = name;
+            document.getElementById('confirmDeleteBtn').href = url;
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>

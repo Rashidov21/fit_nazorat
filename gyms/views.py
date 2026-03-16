@@ -9,6 +9,7 @@ from subscriptions.models import SubscriptionPlan
 import json
 from django.utils import timezone
 from datetime import timedelta
+from .models import Gym, GymDevice
 
 @login_required
 def gym_admin_dashboard(request):
@@ -84,7 +85,6 @@ def gym_add_device(request):
         serial = request.POST.get('serial')
         ip = request.POST.get('ip')
         
-        from .models import GymDevice
         GymDevice.objects.create(
             gym=gym,
             device_name=name,
@@ -102,7 +102,6 @@ def gym_edit_device(request, device_id):
         return render(request, 'errors/403.html', status=403)
         
     gym = request.user.gyms.first()
-    from .models import GymDevice
     device = get_object_or_404(GymDevice, id=device_id, gym=gym)
     
     if request.method == 'POST':
@@ -126,7 +125,6 @@ def gym_delete_device(request, device_id):
         return render(request, 'errors/403.html', status=403)
         
     gym = request.user.gyms.first()
-    from .models import GymDevice
     device = get_object_or_404(GymDevice, id=device_id, gym=gym)
     device.delete()
     messages.success(request, "Qurilma o'chirildi.")

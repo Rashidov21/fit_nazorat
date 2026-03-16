@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta, date
+import json
+import openpyxl
+from django.http import HttpResponse
+
 from .models import Member, MembershipType
 from gyms.models import Gym
 from accounts.models import User
-from django.contrib import messages
-import json
-from django.utils import timezone
-from datetime import timedelta
+from payments.models import GymPayment
 
 @login_required
 def gym_members_list(request):
@@ -22,9 +26,6 @@ def gym_members_list(request):
     
     # Export logic
     if request.GET.get('export') == 'excel':
-        import openpyxl
-        from django.http import HttpResponse
-        
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
         worksheet.title = "Mijozlar"
@@ -95,8 +96,8 @@ def gym_edit_member(request, member_id):
     if request.method == 'POST':
         member.first_name = request.POST.get('first_name')
         member.last_name = request.POST.get('last_name')
-        member.phone_number = request.POST.get('phone')
-        member.face_id_code = request.POST.get('face_id')
+        member.phone_number = request.POST.get('phone_number')
+        member.face_id_code = request.POST.get('face_id_code')
         member.is_active = request.POST.get('is_active') == 'on'
         member.save()
         messages.success(request, f"{member.first_name} ma'lumotlari yangilandi.")
@@ -196,7 +197,6 @@ def gym_renew_member(request, member_id):
         return render(request, 'errors/403.html', status=403)
         
     gym = request.user.gyms.first()
-    from django.shortcuts import get_object_or_404
     member = get_object_or_404(Member, id=member_id, gym=gym)
     membership_types = MembershipType.objects.filter(gym=gym, is_active=True)
     
@@ -208,15 +208,12 @@ def gym_renew_member(request, member_id):
             mem_type = MembershipType.objects.get(id=mem_type_id, gym=gym)
             
             # extend expiration
-            import datetime
-            from django.utils import timezone
             base_date = member.membership_expires_at if member.membership_expires_at and member.membership_expires_at > timezone.now().date() else timezone.now().date()
-            member.membership_expires_at = base_date + datetime.timedelta(days=mem_type.duration_days)
+            member.membership_expires_at = base_date + timedelta(days=mem_type.duration_days)
             member.active_membership_type = mem_type
             member.save()
             
             # Logging payment
-            from payments.models import GymPayment
             GymPayment.objects.create(
                 member=member,
                 gym=gym,
